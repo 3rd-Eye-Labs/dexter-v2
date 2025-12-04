@@ -25,6 +25,10 @@ export class Arc {
         this._irisApi = new IrisApiService(config.irisHost ?? 'https://iris.indigoprotocol.io');
     }
 
+    get wallet(): IWallet {
+        return this._wallet;
+    }
+
     get iris(): Indigo {
         return this._irisApi;
     }
