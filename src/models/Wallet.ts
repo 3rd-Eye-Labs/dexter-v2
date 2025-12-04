@@ -1,10 +1,16 @@
 import { IWallet } from '../interfaces/IWallet.js';
-import { BlockfrostConfig, Cip30Api, KupmiosConfig, Payment, WalletOptions } from '../types.js';
+import { BlockfrostConfig, Cip30Api, KupmiosConfig, Payment } from '../types.js';
 import { Transaction } from './Transaction.js';
 
 export class Wallet extends IWallet {
 
     isWalletLoaded: boolean;
+
+    constructor() {
+        super();
+
+        //todo
+    }
 
     address(): string {
         return '';
@@ -14,11 +20,11 @@ export class Wallet extends IWallet {
         return undefined;
     }
 
-    loadWallet(walletApi: Cip30Api, config: any): Promise<IWallet> {
+    loadWallet(walletApi: Cip30Api): Promise<IWallet> {
         return Promise.resolve(undefined);
     }
 
-    loadWalletFromSeedPhrase(seedPhrase: string[], options: WalletOptions, config: BlockfrostConfig | KupmiosConfig): Promise<IWallet> {
+    loadWalletFromSeedPhrase(seedPhrase: string[], config: BlockfrostConfig | KupmiosConfig): Promise<IWallet> {
         return Promise.resolve(undefined);
     }
 

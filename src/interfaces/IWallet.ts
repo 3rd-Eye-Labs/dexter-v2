@@ -1,4 +1,4 @@
-import { BlockfrostConfig, Cip30Api, KupmiosConfig, Payment, WalletOptions } from '../types.js';
+import { BlockfrostConfig, Cip30Api, KupmiosConfig, Payment } from '../types.js';
 import { Transaction } from '../models/Transaction.js';
 
 export abstract class IWallet {
@@ -13,7 +13,7 @@ export abstract class IWallet {
 
     abstract loadWallet(walletApi: Cip30Api, config: any): Promise<IWallet>;
 
-    abstract loadWalletFromSeedPhrase(seedPhrase: string[], options: WalletOptions, config: BlockfrostConfig | KupmiosConfig): Promise<IWallet>;
+    abstract loadWalletFromSeedPhrase(seedPhrase: string[], config: BlockfrostConfig | KupmiosConfig): Promise<IWallet>;
 
     abstract createTransaction(): Transaction;
 

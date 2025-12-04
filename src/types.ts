@@ -2,6 +2,18 @@ import { LiquidityPool, Token } from '@indigo-labs/iris-sdk';
 import { UTxO } from '@lucid-evolution/lucid';
 import { AddressType, TransactionStatus } from './constants.js';
 
+export type ArcConfig = {
+    irisHost?: string,
+    wallet?: {
+        connection: BlockfrostConfig | KupmiosConfig,
+        accountIndex?: number,
+        seedPhrase: string[],
+    } | {
+        accountIndex?: number,
+        cip30: Cip30Api,
+    },
+}
+
 export type AssetBalance = {
     asset: Token,
     quantity: bigint,
@@ -36,11 +48,6 @@ export type SwapBuilderParameters = {
     outToken: Token,
     outAmount: bigint,
     spendUtxos?: UTxO[],
-};
-
-export type WalletOptions = {
-    addressType?: AddressType;
-    accountIndex?: number;
 };
 
 export interface BlockfrostConfig {
