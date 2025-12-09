@@ -11,6 +11,8 @@ import { SundaeSwapV1 } from './dex/SundaeSwapV1.js';
 import { SundaeSwapV3 } from './dex/SundaeSwapV3.js';
 import { WingRidersV1 } from './dex/WingRidersV1.js';
 import { WingRidersV2 } from './dex/WingRidersV2.js';
+import { Liqwid } from './protocol/Liqwid.js';
+import { Bodega } from './protocol/Bodega.js';
 
 export class Arc {
 
@@ -66,7 +68,15 @@ export class Arc {
     }
 
     get indigo(): Indigo {
-        return new MinswapV2();
+        return new Indigo();
+    }
+
+    get liqwid(): Indigo {
+        return new Liqwid();
+    }
+
+    get bodega(): Indigo {
+        return new Bodega();
     }
 
     withWallet(wallet: IWallet) {
