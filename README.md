@@ -1,20 +1,20 @@
 
 ## Installation
 ##### NPM
-`$ npm install @third-eye-labs/arc`
+`$ npm install @3rd-eye-labs/dexter-v2`
 
 ##### PNPM
-`$ pnpm install @third-eye-labs/arc`
+`$ pnpm install @3rd-eye-labs/dexter-v2`
 
 ##### Yarn
-`$ yarn add @third-eye-labs/arc`
+`$ yarn add @3rd-eye-labs/dexter-v2`
 
 ## Using
 
 ##### Arc Instance
 Arc supports using CIP-30 wallets, and wallets by seed phrase. Each have their own required config, however here is how you can load a wallet by seed phrase :
 ```
-const arc = await LoadArc({
+const arc = await LoadDexter({
     // Custom Iris instance, ignore if using default
     irisHost: 'http://localhost:8000',
     wallet: {

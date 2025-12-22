@@ -85,7 +85,7 @@ export class Dexter {
 
 }
 
-export const LoadArc: (config: ArcConfig) => Promise<Dexter> = async (config: ArcConfig): Promise<Dexter> => {
+export const LoadDexter: (config: ArcConfig) => Promise<Dexter> = async (config: ArcConfig): Promise<Dexter> => {
     const arc: Dexter = new Dexter(config);
 
     if (config.wallet) {
