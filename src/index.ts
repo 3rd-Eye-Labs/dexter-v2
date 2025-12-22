@@ -1,4 +1,4 @@
-export * from './Arc.js';
+export * from './Dexter.js';
 export * from './constants.js';
 export * from './types.js';
 

@@ -14,7 +14,7 @@ import { WingRidersV2 } from './dex/WingRidersV2.js';
 import { Liqwid } from './protocol/Liqwid.js';
 import { Bodega } from './protocol/Bodega.js';
 
-export class Arc {
+export class Dexter {
 
     protected _config: ArcConfig;
 
@@ -85,8 +85,8 @@ export class Arc {
 
 }
 
-export const LoadArc: (config: ArcConfig) => Promise<Arc> = async (config: ArcConfig): Promise<Arc> => {
-    const arc: Arc = new Arc(config);
+export const LoadArc: (config: ArcConfig) => Promise<Dexter> = async (config: ArcConfig): Promise<Dexter> => {
+    const arc: Dexter = new Dexter(config);
 
     if (config.wallet) {
         const wallet: Wallet = new Wallet();

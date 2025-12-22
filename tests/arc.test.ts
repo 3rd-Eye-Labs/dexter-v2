@@ -1,9 +1,9 @@
-import { Arc, LoadArc, MinswapV2 } from '../src/index.js';
+import { Dexter, LoadArc, MinswapV2 } from '../src/index.js';
 
 test('can create instance', async () => {
     const arc = await LoadArc({});
 
-    expect(arc).toBeInstanceOf(Arc);
+    expect(arc).toBeInstanceOf(Dexter);
 });
 
 test('can use helper', async () => {
