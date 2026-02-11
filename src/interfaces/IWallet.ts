@@ -4,16 +4,9 @@ import { Transaction } from '../models/Transaction.js';
 export abstract class IWallet {
 
     public abstract isWalletLoaded: boolean;
-
-    abstract address(): string;
-
-    abstract publicKeyHash(): string;
-
-    abstract stakingKeyHash(): string;
-
-    abstract loadWallet(walletApi: Cip30Api, config: any): Promise<IWallet>;
-
-    abstract loadWalletFromSeedPhrase(seedPhrase: string[], config: BlockfrostConfig | KupmiosConfig): Promise<IWallet>;
+    public abstract address: string;
+    public abstract publicKeyHash: string;
+    public abstract stakingKeyHash: string | null;
 
     abstract createTransaction(): Transaction;
 

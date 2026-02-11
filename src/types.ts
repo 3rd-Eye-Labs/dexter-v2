@@ -1,23 +1,19 @@
 import { LiquidityPool, Token } from '@indigo-labs/iris-sdk';
-import { UTxO } from '@lucid-evolution/lucid';
+import { Script, UTxO } from '@lucid-evolution/lucid';
 import { AddressType, TransactionStatus } from './constants.js';
+import { Assets } from '@lucid-evolution/lucid';
 
-export type ArcConfig = {
+export type DexterConfig = {
     irisHost?: string,
     wallet?: {
         connection: BlockfrostConfig | KupmiosConfig,
         accountIndex?: number,
         seedPhrase: string[],
     } | {
-        accountIndex?: number,
+        connection: BlockfrostConfig | KupmiosConfig,
         cip30: Cip30Api,
     },
 }
-
-export type AssetBalance = {
-    asset: Token,
-    quantity: bigint,
-};
 
 export type SwapFee = {
     id: string,
@@ -32,31 +28,37 @@ export type Payment = {
         value: string,
         type: AddressType,
     },
-    assetBalances: AssetBalance[],
-    spendUtxos?: UTxO[],
+    assetBalances: Assets,
+    spendUtxos?: {
+        utxo: UTxO,
+        redeemer: string,
+        validator: Script,
+        signer: string,
+        isInlineDatum: boolean,
+    }[],
+    isInlineDatum?: boolean,
     datum?: string,
-    isInlineDatum: boolean,
 };
 
 export type SwapBuilderParameters = {
+    address: string,
     liquidityPool: LiquidityPool,
     inToken: Token,
     inAmount: bigint,
     spendUtxos?: UTxO[],
+    minReceive: bigint,
 } | {
+    address: string,
     liquidityPool: LiquidityPool,
     outToken: Token,
     outAmount: bigint,
     spendUtxos?: UTxO[],
+    minReceive: bigint,
 };
 
 export interface BlockfrostConfig {
     url: string;
     projectId: string;
-}
-
-export interface KupoConfig {
-    url: string;
 }
 
 export interface KupmiosConfig {
