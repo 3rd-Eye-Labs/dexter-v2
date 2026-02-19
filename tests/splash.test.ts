@@ -1,14 +1,15 @@
-import { WingRiders } from '../src/dex/WingRiders.js';
+import { Splash } from '../src/dex/Splash.js';
 import { Asset, LiquidityPool, LiquidityPoolState } from '@indigo-labs/iris-sdk';
 
+const tokenA = 'lovelace' as const;
 const tokenB = new Asset('policy', 'name');
 
 const lp = new LiquidityPool(
-    'WingRiders',
+    'Splash',
     '123',
     'addr123',
     'addr123',
-    'lovelace',
+    tokenA,
     tokenB,
     1,
     null,
@@ -26,19 +27,19 @@ const lp = new LiquidityPool(
 const baseParams = {
     address: 'addr_test',
     liquidityPool: lp,
-    minReceive: 0n,
+    minReceive: 100_000n,
 };
 
-test('fees returns agentFee and oil', () => {
-    const dex = new WingRiders({} as any);
+test('fees returns batcherFee and deposit', () => {
+    const dex = new Splash({} as any);
     const fees = dex.fees(baseParams as any);
 
-    expect(fees.find(f => f.id === 'agentFee')).toBeDefined();
-    expect(fees.find(f => f.id === 'oil')).toBeDefined();
+    expect(fees.find(f => f.id === 'batcherFee')).toBeDefined();
+    expect(fees.find(f => f.id === 'deposit')).toBeDefined();
 });
 
 test('estimatedReceive computes positive output for inToken', () => {
-    const dex = new WingRiders({} as any);
+    const dex = new Splash({} as any);
     const params = {
         ...baseParams,
         inToken: 'lovelace',
@@ -51,7 +52,7 @@ test('estimatedReceive computes positive output for inToken', () => {
 });
 
 test('estimatedReceive throws without inToken', () => {
-    const dex = new WingRiders({} as any);
+    const dex = new Splash({} as any);
     const params = {
         ...baseParams,
         inAmount: 10_000n,
@@ -61,7 +62,7 @@ test('estimatedReceive throws without inToken', () => {
 });
 
 test('estimatedGive computes positive input for outToken', () => {
-    const dex = new WingRiders({} as any);
+    const dex = new Splash({} as any);
     const params = {
         ...baseParams,
         outToken: 'lovelace',
@@ -74,7 +75,7 @@ test('estimatedGive computes positive input for outToken', () => {
 });
 
 test('estimatedGive throws without outToken', () => {
-    const dex = new WingRiders({} as any);
+    const dex = new Splash({} as any);
     const params = {
         ...baseParams,
         outAmount: 10_000n,
@@ -84,7 +85,7 @@ test('estimatedGive throws without outToken', () => {
 });
 
 test('priceImpactPercent returns finite number', () => {
-    const dex = new WingRiders({} as any);
+    const dex = new Splash({} as any);
     const params = {
         ...baseParams,
         inToken: 'lovelace',

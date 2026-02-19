@@ -94,9 +94,63 @@ swap.onSubmitted((t) => {
 });
 ```
 
+##### Cancelling a Minswap order
+
+Cancelling on-chain orders uses the DEX helper’s `buildCancelSwapOrder` plus the `Wallet`/`Transaction` helpers. For Minswap, you pass in the UTxO(s) that hold your existing order and Dexter builds the right spending redeemer and validator wiring.
+
+```ts
+import {
+  LoadDexter,
+  MinswapV2,
+} from '@3rd-eye-labs/dexter-v2';
+import { LiquidityPool } from '@indigo-labs/iris-sdk';
+import { UTxO } from '@lucid-evolution/lucid';
+
+const dexter = await LoadDexter({
+  irisHost: 'https://iris.indigoprotocol.io',
+  wallet: {
+    connection: {
+      url: 'https://cardano-mainnet.blockfrost.io',
+      projectId: 'project_id',
+    },
+    seedPhrase: ['word1', 'word2', /* ... */],
+  },
+});
+
+const minswap: MinswapV2 = dexter.minswapV2;
+
+// 1. Resolve the liquidity pool and the order UTxO you want to cancel
+const lp: LiquidityPool = /* fetch from Iris or other source */ {} as any;
+const orderUtxo: UTxO = /* lookup user order UTxO from your indexer */ {} as any;
+
+// 2. Ask the Minswap helper to build cancel payments
+const payments = minswap.buildCancelSwapOrder({
+  address: dexter.wallet.address,
+  liquidityPool: lp,
+  // in/out fields are unused by cancel, but required by the type
+  inToken: 'lovelace',
+  inAmount: 0n,
+  minReceive: 0n,
+  spendUtxos: [orderUtxo],
+});
+
+// 3. Build, sign, and submit the cancellation transaction
+const tx = dexter.wallet
+  .createTransaction();
+
+await tx
+  .payToAddresses(payments)
+  .then(() => tx.sign())
+  .then(() => tx.submit());
+
+tx.onSubmitted((t) => {
+  console.log('Cancel submitted with hash', t.hash);
+});
+```
+
 ##### Calling specific DEX helpers
 
-Under the hood, each DEX (Minswap, Muesliswap, SundaeSwap, WingRiders, etc.) is exposed as a helper on the `Dexter` instance. These helpers all implement the `SwapBuilder` interface (`estimatedReceive`, `estimatedGive`, `fees`, `priceImpactPercent`, `buildSwapOrder`, `buildCancelSwapOrder`).
+Under the hood, each DEX (Minswap, Muesliswap, SundaeSwap, WingRiders, Splash, etc.) is exposed as a helper on the `Dexter` instance. These helpers all implement the `SwapBuilder` interface (`estimatedReceive`, `estimatedGive`, `fees`, `priceImpactPercent`, `buildSwapOrder`, `buildCancelSwapOrder`).
 
 ```ts
 import {
@@ -106,7 +160,9 @@ import {
     Muesliswap,
     SundaeSwapV1,
     SundaeSwapV3,
-    WingRiders,
+    Splash,
+    WingRidersV1,
+    WingRidersV2,
 } from '@3rd-eye-labs/dexter-v2';
 import { LiquidityPool } from '@indigo-labs/iris-sdk';
 
@@ -120,7 +176,9 @@ const minswapV2: MinswapV2 = dexter.minswapV2;
 const muesliswap: Muesliswap = dexter.muesliswap;
 const sundaeV1: SundaeSwapV1 = dexter.sundaeSwapV1;
 const sundaeV3: SundaeSwapV3 = dexter.sundaeSwapV3;
-const wingRiders: WingRiders = dexter.wingRiders;
+const splash: Splash = dexter.splash;
+const wingRidersV1: WingRidersV1 = dexter.wingRidersV1;
+const wingRidersV2: WingRidersV2 = dexter.wingRidersV2;
 
 // Liquidity pool can come from Iris or be constructed manually
 const lp: LiquidityPool = /* fetch from IrisApiService or build */ {} as any;
@@ -134,8 +192,8 @@ const minswapOut = minswapV2.estimatedReceive({
     minReceive: 0n,
 });
 
-// Example: quote how much you need to give on WingRiders for a desired output
-const wingRidersIn = wingRiders.estimatedGive({
+// Example: quote how much you need to give on WingRiders v2 for a desired output
+const wingRidersIn = wingRidersV2.estimatedGive({
     address: dexter.wallet?.address ?? '',
     liquidityPool: lp,
     outToken: 'lovelace',
@@ -151,6 +209,15 @@ const fees = minswapV2.fees({
 });
 
 const priceImpact = muesliswap.priceImpactPercent({
+    address: dexter.wallet?.address ?? '',
+    liquidityPool: lp,
+    inToken: 'lovelace',
+    inAmount: 1_000_000n,
+    minReceive: 0n,
+});
+
+// Example: quote on Splash
+const splashOut = splash.estimatedReceive({
     address: dexter.wallet?.address ?? '',
     liquidityPool: lp,
     inToken: 'lovelace',

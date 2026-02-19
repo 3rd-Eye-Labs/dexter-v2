@@ -8,7 +8,9 @@ import { IrisApiService } from '@indigo-labs/iris-sdk';
 import { Muesliswap } from './dex/Muesliswap.js';
 import { SundaeSwapV1 } from './dex/SundaeSwapV1.js';
 import { SundaeSwapV3 } from './dex/SundaeSwapV3.js';
-import { WingRiders } from './dex/WingRiders.js';
+import { WingRidersV1 } from './dex/WingRidersV1.js';
+import { WingRidersV2 } from './dex/WingRidersV2.js';
+import { Splash } from './dex/Splash.js';
 import { Liqwid } from './protocol/Liqwid.js';
 import { Bodega } from './protocol/Bodega.js';
 import { SwapRequest } from './SwapRequest.js';
@@ -57,8 +59,16 @@ export class Dexter {
         return new SundaeSwapV3(this);
     }
 
-    get wingRiders(): WingRiders {
-        return new WingRiders(this);
+    get wingRidersV1(): WingRidersV1 {
+        return new WingRidersV1(this);
+    }
+
+    get wingRidersV2(): WingRidersV2 {
+        return new WingRidersV2(this);
+    }
+
+    get splash(): Splash {
+        return new Splash(this);
     }
 
     get indigo(): Indigo {
