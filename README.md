@@ -94,6 +94,71 @@ swap.onSubmitted((t) => {
 });
 ```
 
+##### Calling specific DEX helpers
+
+Under the hood, each DEX (Minswap, Muesliswap, SundaeSwap, WingRiders, etc.) is exposed as a helper on the `Dexter` instance. These helpers all implement the `SwapBuilder` interface (`estimatedReceive`, `estimatedGive`, `fees`, `priceImpactPercent`, `buildSwapOrder`, `buildCancelSwapOrder`).
+
+```ts
+import {
+    LoadDexter,
+    MinswapV1,
+    MinswapV2,
+    Muesliswap,
+    SundaeSwapV1,
+    SundaeSwapV3,
+    WingRiders,
+} from '@3rd-eye-labs/dexter-v2';
+import { LiquidityPool } from '@indigo-labs/iris-sdk';
+
+const dexter = await LoadDexter({
+    irisHost: 'https://iris.indigoprotocol.io',
+    // wallet config optional if you only want quotes
+});
+
+// Choose which DEX you want to use
+const minswapV2: MinswapV2 = dexter.minswapV2;
+const muesliswap: Muesliswap = dexter.muesliswap;
+const sundaeV1: SundaeSwapV1 = dexter.sundaeSwapV1;
+const sundaeV3: SundaeSwapV3 = dexter.sundaeSwapV3;
+const wingRiders: WingRiders = dexter.wingRiders;
+
+// Liquidity pool can come from Iris or be constructed manually
+const lp: LiquidityPool = /* fetch from IrisApiService or build */ {} as any;
+
+// Example: quote how much you receive on Minswap v2 for a given input
+const minswapOut = minswapV2.estimatedReceive({
+    address: dexter.wallet?.address ?? '',
+    liquidityPool: lp,
+    inToken: 'lovelace',
+    inAmount: 1_000_000n,
+    minReceive: 0n,
+});
+
+// Example: quote how much you need to give on WingRiders for a desired output
+const wingRidersIn = wingRiders.estimatedGive({
+    address: dexter.wallet?.address ?? '',
+    liquidityPool: lp,
+    outToken: 'lovelace',
+    outAmount: 1_000_000n,
+    minReceive: 0n,
+});
+
+// You can also inspect fees and price impact per DEX
+const fees = minswapV2.fees({
+    address: dexter.wallet?.address ?? '',
+    liquidityPool: lp,
+    minReceive: 0n,
+});
+
+const priceImpact = muesliswap.priceImpactPercent({
+    address: dexter.wallet?.address ?? '',
+    liquidityPool: lp,
+    inToken: 'lovelace',
+    inAmount: 1_000_000n,
+    minReceive: 0n,
+});
+```
+
 ## Running Tests
 `$ pnpm run test`
 

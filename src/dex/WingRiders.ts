@@ -128,7 +128,7 @@ export class WingRiders extends IDexterHelper implements SwapBuilder {
 
     estimatedGive(params: SwapBuilderParameters): bigint {
         if (! ('outToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No outToken specified.');
         }
 
         const poolFeeMultiplier: bigint = 10000n;
@@ -144,7 +144,7 @@ export class WingRiders extends IDexterHelper implements SwapBuilder {
 
     estimatedReceive(params: SwapBuilderParameters): bigint {
         if (! ('inToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No inToken specified.');
         }
 
         const poolFeeMultiplier: bigint = 10000n;
@@ -179,7 +179,7 @@ export class WingRiders extends IDexterHelper implements SwapBuilder {
 
     priceImpactPercent(params: SwapBuilderParameters): number {
         if (! ('inToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No inToken specified.');
         }
 
         const swapOutTokenDecimals: number = tokensMatch(params.liquidityPool.tokenA, params.inToken)

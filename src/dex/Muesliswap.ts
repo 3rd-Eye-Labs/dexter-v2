@@ -109,7 +109,7 @@ export class Muesliswap extends IDexterHelper implements SwapBuilder {
 
     estimatedGive(params: SwapBuilderParameters): bigint {
         if (! ('outToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No outToken specified.');
         }
 
         const [reserveOut, reserveIn]: bigint[] = correspondingReserves(params.liquidityPool, params.outToken);
@@ -121,7 +121,7 @@ export class Muesliswap extends IDexterHelper implements SwapBuilder {
 
     estimatedReceive(params: SwapBuilderParameters): bigint {
         if (! ('inToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No inToken specified.');
         }
 
         const [reserveIn, reserveOut]: bigint[] = correspondingReserves(params.liquidityPool, params.inToken);
@@ -155,7 +155,7 @@ export class Muesliswap extends IDexterHelper implements SwapBuilder {
 
     priceImpactPercent(params: SwapBuilderParameters): number {
         if (! ('inToken' in params)) {
-            throw new Error('Unable to find relevant UTxO for cancelling the swap order.');
+            throw new Error('No inToken specified.');
         }
 
         const [reserveIn, reserveOut]: bigint[] = correspondingReserves(params.liquidityPool, params.inToken);

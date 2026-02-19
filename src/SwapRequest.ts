@@ -71,7 +71,7 @@ export class SwapRequest {
 
         if (swapOutAmount > 0n) {
             this.swapInAmount = this.builder.estimatedGive(
-                this.prepareSwapParams()
+                this.prepareSwapParams(true)
             );
         }
 
