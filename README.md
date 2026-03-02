@@ -23,22 +23,31 @@ A composable TypeScript SDK for building and submitting Cardano DEX transactions
 
 ##### Dexter Instance
 Dexter supports using CIP-30 wallets, and wallets by seed phrase. Each have their own required config, however here is how you can load a wallet by seed phrase :
-```
+```ts
 const dexter = await LoadDexter({
     // Custom Iris instance, ignore if using default
     irisHost: 'http://localhost:8000',
     wallet: {
      	// Can use Blockfrost, or Kupo + Ogmios
         connection: {
-            url: 'https://cardano-mainnet.blockfrost.io';
-            projectId: 'project_id';
+            url: 'https://cardano-mainnet.blockfrost.io',
+            projectId: 'project_id',
         },
+        // Or specify the CIP-30 instance with the property `cip30`
         seedPhrase: ['word1', 'word2', ...],
     },
 });
 ```
 
 ##### Submitting Swaps
+Properties
+- `swapInToken` : Token you are swapping in
+- `swapOutToken` : Token you are swapping to
+- `liquidityPool` : The pool you are swapping from
+- `slippage` : The amount of slippage you are tolerating
+- `swapInAmount` : The amount you are swapping in
+- `swapOutAmount` : The amount of token you are expected to receive
+
 ```
 // Pools can be grabbed from Iris, or specified directly
 const lp = new LiquidityPool(
@@ -152,7 +161,7 @@ tx.onSubmitted((t) => {
 
 Under the hood, each DEX (Minswap, Muesliswap, SundaeSwap, WingRiders, Splash, etc.) is exposed as a helper on the `Dexter` instance. These helpers all implement the `SwapBuilder` interface (`estimatedReceive`, `estimatedGive`, `fees`, `priceImpactPercent`, `buildSwapOrder`, `buildCancelSwapOrder`).
 
-```ts
+```js
 import {
     LoadDexter,
     MinswapV1,
@@ -225,6 +234,157 @@ const splashOut = splash.estimatedReceive({
     minReceive: 0n,
 });
 ```
+
+##### Protocol helpers: Indigo, Liqwid, Bodega
+
+Dexter also exposes lightweight protocol clients for Iris-backed services: `indigo`, `liqwid`, and `bodega`. All methods return `Promise<any>` and resolve to `false` if the underlying HTTP call fails.
+
+```js
+import { LoadDexter } from '@3rd-eye-labs/dexter-v2';
+
+const dexter = await LoadDexter({
+  irisHost: 'https://iris.indigoprotocol.io',
+});
+
+// Indigo
+const cdps = await dexter.indigo.cdps(); 
+const stakingPositions = await dexter.indigo.stakingPositions();
+
+// Liqwid
+const liqwidMarketParams = await dexter.liqwid.marketParameters(); 
+
+// Bodega
+const bodegaMarkets = await dexter.bodega.markets(); 
+const marketHistory = await dexter.bodega.marketHistory('MARKET_ID');
+```
+
+## Transactions
+You should never have to create DEX transactions yourself. However, the documentation below gives a rundown
+on how you can obtain information for your swap transactions, as well as listen for specific events through the Tx lifecycle.
+
+### Getters
+
+<details>
+<summary><code>hash(): string</code> Get the Tx hash if available</summary>
+
+##### Using
+
+```js
+console.log(transaction.hash);
+```
+</details>
+
+<details>
+<summary><code>isSigned(): boolean</code> Get whether the Tx has been signed</summary>
+
+##### Using
+
+```js
+console.log(transaction.isSigned);
+```
+</details>
+
+<details>
+<summary><code>payments(): PayToAddress[]</code> Get the address payments made for the Tx</summary>
+
+##### Using
+
+```js
+console.log(transaction.payments);
+```
+</details>
+
+<details>
+<summary><code>status(): TransactionStatus</code> Get the current status of the transaction</summary>
+
+##### Using
+
+```js
+console.log(transaction.status);
+```
+</details>
+
+### Listen for Events
+
+<details>
+<summary><code>onBuilding(TransactionCallback): DexTransaction</code> Tx is in building status</summary>
+
+##### Using
+
+```js
+transaction.onBuilding(() => {
+    console.log('Tx building');
+});
+```
+</details>
+
+<details>
+<summary><code>onSigning(TransactionCallback): DexTransaction</code> Tx is in signing status</summary>
+
+##### Using
+
+```js
+transaction.onSigning(() => {
+    console.log('Tx signing');
+});
+```
+</details>
+
+<details>
+<summary><code>onSubmitting(TransactionCallback): DexTransaction</code> Tx is in submitting status</summary>
+
+##### Using
+
+```js
+transaction.onSubmitting(() => {
+    console.log('Tx submitting to chain');
+});
+```
+</details>
+
+<details>
+<summary><code>onSubmitted(TransactionCallback): DexTransaction</code> Tx has been submitted on-chain</summary>
+
+##### Using
+
+```js
+transaction.onSubmitted(() => {
+    console.log('Tx submitted');
+});
+```
+</details>
+
+<details>
+<summary><code>onError(TransactionCallback): DexTransaction</code> Error has occurred with the transaction</summary>
+
+##### Using
+
+```js
+transaction.onError(() => {
+    console.log('Something went wrong');
+});
+```
+</details>
+
+<details>
+<summary><code>onFinally(TransactionCallback): DexTransaction</code> Everything went OK or error has occurred</summary>
+
+##### Using
+
+```js
+transaction.onFinally(() => {
+    console.log('All complete or has errored');
+});
+```
+</details>
+
+## Wallet
+- `isWalletLoaded` : Whether the wallet has been loaded or not
+- `address` : Usable address for a loaded wallet
+- `publicKeyHash` : The public key hash used for orders
+- `stakingKeyHash` : The staking key hash used for orders
+- `lucid` : Used internally to handle the connection to your wallet config
+- `load()` : Used internally to load your wallet config
 
 ## Running Tests
 `$ pnpm run test`

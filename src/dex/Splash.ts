@@ -77,7 +77,7 @@ export class Splash extends IDexterHelper implements SwapBuilder {
         const swapInAmount: bigint = params.inAmount;
 
         const assets: Assets = {
-            lovelace: batcherFee.value + deposit.value,
+            lovelace: batcherFee.value + deposit.value + (swapInToken === 'lovelace' ? swapInAmount : 0n),
         };
 
         const addressDetails: AddressDetails = getAddressDetails(params.address);
